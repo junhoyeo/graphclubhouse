@@ -87,6 +87,22 @@ def get_followers(user_id=USER_ID):
     return _get_pagination('/get_followers', user_id)
 
 
+def get_channels(user_id=USER_ID):
+    return _get_pagination('/get_channels', user_id)
+
+
+def join_channel(user_id=USER_ID):
+    return _get_pagination('/join_channel', user_id)
+
+
+def active_ping(user_id=USER_ID):
+    return _get_pagination('/active_ping', user_id)
+
+
+def refresh_token(user_id=USER_ID):
+    return _get_pagination('/refresh_token', user_id)
+
+
 def explore_follow_network(user_id=USER_ID):
     crawl_functions = [get_following, get_followers]
     for crawl in crawl_functions:
