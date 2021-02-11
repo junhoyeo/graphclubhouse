@@ -8,7 +8,6 @@ __location__ = os.path.realpath(
 def build_relative_path(path):
     return os.path.join(__location__, path)
 
-print(__location__)
 env_path = Path(build_relative_path('.env'))
 load_dotenv(dotenv_path=env_path)
 

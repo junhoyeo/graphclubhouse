@@ -31,7 +31,6 @@ def save_user(current_user):
                 break
         return False
     graph.append(current_user)
-    print(graph)
     with open(build_relative_path('graph.json'), 'w') as graph_file:
         json.dump(graph, graph_file, indent=2)
         graph_file.write('\n')
@@ -39,6 +38,10 @@ def save_user(current_user):
 
 def explore_norminations(initial_user_id=USER_ID):
     next_id = initial_user_id
+
+    if is_user_exists({ 'user_id': next_id}):
+        print(f'[!] User {next_id} already exists')
+        return
 
     while True:
         status, data = authenticated_request(requests.post, '/get_profile', {
@@ -62,3 +65,32 @@ def explore_norminations(initial_user_id=USER_ID):
 
         if next_id is None:
             break
+
+
+def _get_pagination(route, user_id):
+    status, data = authenticated_request(requests.post, route, {
+        'user_id': user_id,
+    })
+    if (status != 200):
+        return []
+
+    # TODO: pagination
+    print('pagination_next:', data['next'])
+
+    return [user['user_id'] for user in data['users']]
+
+def get_following(user_id=USER_ID):
+    return _get_pagination('/get_following', user_id)
+
+
+def get_followers(user_id=USER_ID):
+    return _get_pagination('/get_followers', user_id)
+
+
+def explore_follow_network(user_id=USER_ID):
+    crawl_functions = [get_following, get_followers]
+    for crawl in crawl_functions:
+        users = crawl()
+
+    for user_id in users:
+        explore_norminations(user_id)
