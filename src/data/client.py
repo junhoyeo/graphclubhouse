@@ -1,6 +1,7 @@
 import json
 from constants import API_URL, USER_ID, AUTH_TOKEN, HEADERS
 
+
 def authenticated_request(request_function, endpoint, *args):
     res = request_function(API_URL + endpoint, headers=dict({
         'CH-UserID': str(USER_ID),

@@ -12,6 +12,7 @@ def filter_keys(keys, dictionary):
         value[key] = dictionary[key]
     return value
 
+
 def is_user_exists(current_user, graph=None):
     if graph is None:
         with open(build_relative_path('graph.json'), 'r') as graph_file:
@@ -20,6 +21,7 @@ def is_user_exists(current_user, graph=None):
         if current_user['user_id'] == user['user_id']:
             return True
     return False
+
 
 def save_user(current_user):
     with open(build_relative_path('graph.json'), 'r') as graph_file:
@@ -36,12 +38,13 @@ def save_user(current_user):
         graph_file.write('\n')
     return True
 
+
 def explore_norminations(initial_user_id=USER_ID):
     next_id = initial_user_id
 
-    if is_user_exists({ 'user_id': next_id}):
-        print(f'[!] User {next_id} already exists')
-        return
+    # if is_user_exists({'user_id': next_id}):
+    #     print(f'[!] User {next_id} already exists')
+    #     return
 
     while True:
         status, data = authenticated_request(requests.post, '/get_profile', {
@@ -60,8 +63,9 @@ def explore_norminations(initial_user_id=USER_ID):
         current_user['referrer'] = next_id
 
         pprint(current_user)
-        if not save_user(current_user):
-            break
+        save_user(current_user)
+        # if not save_user(current_user):
+        #     break
 
         if next_id is None:
             break
@@ -79,6 +83,7 @@ def _get_pagination(route, user_id):
 
     return [user['user_id'] for user in data['users']]
 
+
 def get_following(user_id=USER_ID):
     return _get_pagination('/get_following', user_id)
 
@@ -90,7 +95,27 @@ def get_followers(user_id=USER_ID):
 def explore_follow_network(user_id=USER_ID):
     crawl_functions = [get_following, get_followers]
     for crawl in crawl_functions:
+        users = crawl(user_id)
+
+    for current_user_id in users:
+        explore_norminations(current_user_id)
+
+
+def _recursively_explore_follow_networks(user_id, depth):
+    crawl_functions = [get_following, get_followers]
+    for crawl in crawl_functions:
         users = crawl()
 
-    for user_id in users:
-        explore_norminations(user_id)
+    if depth == 0:
+        return
+
+    for current_user_id in users:
+        print(f'[*] Exploring follow network for {current_user_id}')
+        explore_follow_network(current_user_id)
+
+        next_depth = depth - 1
+        _recursively_explore_follow_networks(current_user_id, depth=next_depth)
+
+
+def recursively_explore_follow_networks(user_id=USER_ID, depth=1):
+    _recursively_explore_follow_networks(user_id, depth)

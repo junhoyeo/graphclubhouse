@@ -1,5 +1,4 @@
-from explore import explore_norminations, explore_follow_network
+from explore import recursively_explore_follow_networks
 
 if __name__ == '__main__':
-  explore_norminations()
-  explore_follow_network()
+    recursively_explore_follow_networks()

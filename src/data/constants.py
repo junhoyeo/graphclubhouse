@@ -1,12 +1,15 @@
-import os, os.path
+import os
+import os.path
 from pathlib import Path
 from dotenv import load_dotenv
 
 __location__ = os.path.realpath(
     os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
+
 def build_relative_path(path):
     return os.path.join(__location__, path)
+
 
 env_path = Path(build_relative_path('.env'))
 load_dotenv(dotenv_path=env_path)
