@@ -11,7 +11,7 @@ export default function useWindowSize(): {
       screenWidth: isClient ? window.innerWidth : undefined,
       screenHeight: isClient ? window.innerHeight : undefined,
     }),
-    [isClient],
+    [isClient]
   );
 
   const [windowSize, setWindowSize] = useState(getSize);
