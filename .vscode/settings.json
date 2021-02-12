@@ -1,3 +1,4 @@
 {
-  "python.analysis.extraPaths": ["src/data/"]
+  "python.analysis.extraPaths": ["src/data/"],
+  "editor.formatOnSave": true
 }
